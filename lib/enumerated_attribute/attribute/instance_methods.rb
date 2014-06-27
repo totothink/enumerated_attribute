@@ -13,7 +13,7 @@ module EnumeratedAttribute
         base.class_eval %{
           def respond_to_with_#{respond_to_suffix}?(method, include_private=false)
             self.respond_to_without_#{respond_to_suffix}?(method, include_private) ||
-              (!!parse_dynamic_method_parts!(method.to_s) rescue false)
+            (!!parse_dynamic_method_parts!(method.to_s) rescue false)
           end
         }, __FILE__, __LINE__
 

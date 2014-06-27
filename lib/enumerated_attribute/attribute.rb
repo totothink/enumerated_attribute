@@ -4,7 +4,6 @@ require 'enumerated_attribute/attribute/instance_methods'
 require 'enumerated_attribute/attribute/class_methods'
 require 'enumerated_attribute/method_definition_dsl'
 require 'enumerated_attribute/integrations'
-require 'enumerated_attribute/rails_helpers'
 require 'ostruct'
 
 module EnumeratedAttribute

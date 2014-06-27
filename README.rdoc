@@ -20,10 +20,6 @@ Install
 
 == Notice
 
-* Rails 3 ... dynamic finders working... should be rails3 ready.  We are completing form tests.
-
-* Rails 2.3.8 breaks find_or_create_by_... and find_or_initialize_by_... methods.  Write me if you gotta have it... otherwise happy Rails3.
-
 * Write cleaner code ... implement state patterns for your enumerated attributes (enumerated_state[http://github.com/jeffp/enumerated_state])
 
 == How to submit an Issue
@@ -34,19 +30,16 @@ test framework and run with little to no coersing.  Thanks.
 
 == Contributors
 
-* Lailson Bandeira - Rails 3 updates
+* Lailson Bandeira
 	
 == Description
 
 Typically, in Ruby, enumerated attributes are implemented with strings, symbols or constants.  Often the 
 developer is burdened with repeatedly defining common methods in support of each
-attribute.  +enumerated_attribute+ provides a DRY implementation for enumerations in Rails.  
+attribute. 
 Repetitive code such as initializers, accessors, predicate and enumeration methods are automatically generated
 along with the following features:
 
-* ActiveRecord integration
-* ActionView form helpers
-* Scaffold generator integration
 * Definable enumeration labels
 * Enum helper methods
 * Dynamic predicate methods
@@ -58,51 +51,6 @@ along with the following features:
 For a Ruby application, install the gem and require it 
 
   require 'enumerated_attribute'
-
-or for a rails application configure the gem in the config block of the
-config/environment.rb file
-
-  config.gem "enumerated_attribute"
-
-and run the gem install rake task
-
-  rake gems:install
-
-
-== Rails Example
-
-Here's an example of +enumerated_attribute+ features in a Rails application:
-
-In the migration, declare your enumeration attributes with +enum+
-
-  create_table :users, :force=>true do |t|
-    t.string :first_name
-    t.enum :gender
-    t.enum :degree
-    ...
-  end
-
-Define the enumerations in your models with +enum_attr+
-
-  class User < ActiveRecord::Base
-    enum_attr :gender, %w(male female)
-    enum_attr :degree, %w(^none high_school college graduate)
-  end
-
-Expose the enumeration in your forms with +enum_select+
-
-  <% form_for :user do |f| %>
-    <%= f.label :user %> <%= f.text_field :first_name %><br/>
-    <%= f.label :gender %> <%= f.enum_select :gender %><br/>
-    <%= f.label :degree %> <%= f.enum_select :degree %><br/>
-    <%= submit_tag 'save' %>
-  <% end %>
-
-or generate a scaffold with one of your favorite scaffold generators.  Currently
-supports most scaffold generators including scaffold, wizardly_scaffold, nifty_scaffold, rspec_scaffold, and haml_scaffold.
-See the section 'Generating Scaffolds' below.
-
-The select options text can be customized.  See 'Customizing Labels' in the Integration section.
 
 == Ruby Example
 
@@ -400,35 +348,6 @@ until the attribute reaches neutral.
 
 === Integration
 
-==== ActiveRecord integration
-
-The plugin can be used with ActiveRecord.  Enumerated attributes may be declared on 
-column attributes or as independent enumerations.  Declaring an enumerated attribute
-on a column attribute will enforce the enumeration using symbols.  The 
-enumerated column attribute must be declared as a STRING in the database schema.  
-The enumerated attribute will be stored as a string but retrieved in code as a symbol.  The 
-enumeration functionality is consistent across integrations.
-
-  require 'enumerated_attribute'
-  require 'active_record'
-	
-  class Order < ActiveRecord::Base	
-    enum_attr :status, %w(^hold, processing, delayed, shipped)
-    enum_attr :billing_status, 
-      %w(^unauthorized, authorized, auth_failed, captured, capture_failed, closed)
-  end
-	
-  o = Order.new
-  o.status                          # => :hold
-  o.billing_status                  # => :unauthorized
-  o.save!
-	
-  o = Order.new(:invoice=>'43556334-W84', :status=>:processing, :billing=>:authorized)
-  o.save!
-  o.status                          # => :processing
-  o.invoice                         # => "43556334-W84"
-	
-
 ==== Labels
 
 Each enumeration value has a corresponding text label.  The defaults are made 
@@ -453,7 +372,7 @@ of information available from the +enums+ method.
 
 Labels can be customized as shown here:
 
-  class User < ActiveRecord::Base
+  class User
     enum_attr :contact_options, %w(none phone email mail) do
       label :none=>'Please do not contact me'
       label :phone=>'I would like a representative to call me'
@@ -495,7 +414,7 @@ migrations using the 'enum' type for enumerations
 
 Second, do not forget to add the +enum_attr+ macro to the generated model and migrate the database
 
-  class Contractor < ActiveRecord::Base
+  class Contractor
     enum_attr :gender, %w(male female)
     enum_attr :status, %w(available unavailable)
   end
@@ -552,11 +471,6 @@ overwriting the plugin's methods.  The best approach is shown here:
     enum_attr temp:, %w(cold warm hot boiling)
   end
 
-==== ActiveRecord
-
-ActiveRecord's write_attribute and read_attribute methods do not support symbols for enumerated attributes.  
-
-
 == Testing
 
 The plugin uses jeweler, RSpec, and Webrat for testing.  Make sure you have these gems installed:
@@ -566,22 +480,7 @@ The plugin uses jeweler, RSpec, and Webrat for testing.  Make sure you have thes
 To test the plugin for regular ruby objects, run:
 
   rake spec:object
-	
-Testing ActiveRecord integration requires the install of Sqlite3 and the 
-sqlite3-ruby gem.  To test ActiveRecord, run:
-
-  rake spec:ar
-
-And for testing +enum_select+ in form views:
-
-  rake spec:forms
-	
+		
 To test all specs:
 
   rake spec:all
-
-
-== Dependencies
-
-* ActiveRecord (but not required)
-* Sqlite3 and sqlite3-ruby gem (for testing)
